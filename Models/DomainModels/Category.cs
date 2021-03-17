@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
-namespace AndersenCoreApp.Models
+namespace AndersenCoreApp.Models.DomainModels
 {
     [Table("tblCategory")]
     public partial class Category

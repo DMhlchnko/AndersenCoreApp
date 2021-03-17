@@ -1,13 +1,9 @@
-﻿using AndersenCoreApp.Abstractions;
-using AndersenCoreApp.EF_Abstractions;
-using AndersenCoreApp.Models;
-using AndersenCoreApp.ViewDTO;
-using AutoMapper;
+﻿using AndersenCoreApp.Interfaces.Services;
+using AndersenCoreApp.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,7 +13,6 @@ namespace AndersenCoreApp.Controllers
     [ApiController]
     public class RelationController : ControllerBase
     {
-
         private IRelationService relationService;
 
         public RelationController(IRelationService service)
@@ -25,65 +20,51 @@ namespace AndersenCoreApp.Controllers
             relationService = service;
         }
 
-        
         [HttpGet]
-        public List<RelationDTO> Get(string orderProperty ="", string orderCategory = "")
+        public ActionResult<List<RelationViewModel>> GetRelationsList([FromQuery] string orderProperty = "", [FromQuery] string categoryName = "")
         {
             var relations = relationService.GetAll();
-            if (!string.IsNullOrEmpty(orderProperty))
+            if (relations == null)
             {
-                relations = relationService.GetSortedListByProperties(relations, orderProperty);
+                return NotFound();
             }
-            if (!string.IsNullOrEmpty(orderCategory))
-            {
-                 relations = relationService.GetListByCategories(relations, orderCategory);
-            }
-            var mapper = relationService.ConfigureMapperForDto();
-            var relationsDTO = mapper.Map<List<Relation>, List<RelationDTO>>(relations.ToList());
-            return relationsDTO;
+            var sortedRelations = relationService.GetSortedAndFilteredRelations(relations, categoryName, orderProperty);
 
-
+            return Ok(sortedRelations);
         }
 
-        
         [HttpGet("{id}")]
-        public RelationDTO Get(Guid id)
+        public ActionResult<RelationViewModel> GetRelation(Guid id)
         {
-             
             var relation = relationService.GetOne(id);
-            var mapper = relationService.ConfigureMapperForDto();
-            RelationDTO model = mapper.Map<Relation, RelationDTO>(relation);
-            return model;
+            if (relation == null)
+                return NotFound();
+            return Ok(relation);
         }
 
-        
         [HttpPost]
-        public void Post(Relation relation)
+        public ActionResult CreateRelation(RelationViewModel relation)
         {
             if (ModelState.IsValid)
             {
                 relationService.Create(relation);
+                return Ok(relation);
             }
+            return BadRequest(ModelState);
         }
 
-        
-        [HttpPut("{id}")]
-        public void Put(Guid id, Relation relation)
+        [HttpPut]
+        public ActionResult Update(RelationViewModel relation)
         {
-            if (ModelState.IsValid)
-            {
-                relationService.Update(relation);
-            }
+            relationService.Update(relation);
+            return Ok();
         }
 
-       
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public ActionResult Delete(Guid id)
         {
             relationService.Delete(id);
+            return NoContent();
         }
-
-        
-
     }
 }

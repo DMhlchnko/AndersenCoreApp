@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
-namespace AndersenCoreApp.Models
+namespace AndersenCoreApp.Models.DomainModels
 {
     [Table("tblRelationAddress")]
     public partial class RelationAddress
     {
-       
+
         public Guid RelationId { get; set; }
         [Key]
         public Guid AddressTypeId { get; set; }

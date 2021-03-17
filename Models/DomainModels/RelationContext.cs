@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
-namespace AndersenCoreApp.Models
+namespace AndersenCoreApp.Models.DomainModels
 {
     public partial class RelationContext : DbContext
     {
@@ -25,13 +23,13 @@ namespace AndersenCoreApp.Models
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<RelationAddress> RelationAddresses { get; set; }
-        
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
