@@ -4,7 +4,8 @@ namespace AndersenCoreApp.Infrastructure
 {
     public interface IMapperConfigurator
     {
-        IMapper ConfigureMapperForDto();
         IMapper ConfigureMapperForViewModel();
+        IMapper ConfigureMapperForRelation();
+
     }
 }

@@ -1,21 +1,21 @@
 ﻿using AndersenCoreApp.Infrastructure;
-using AndersenCoreApp.Models.DomainModels;
-using AndersenCoreApp.Models.ViewModels;
+using AndersenCoreApp.Models.ModelsDTO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Interfaces.Services
 {
-    public interface IRelationService : IMapperConfigurator
+    public interface IRelationService
     {
-        List<RelationViewModel> GetSortedAndFilteredRelations(IQueryable<Relation> list, string categoryName, string orderProperties);
-        bool CheckPostalMask(Relation relation);
-        void Create(RelationViewModel relation);
-        RelationViewModel GetOne(Guid id);
-        IQueryable<Relation> GetAll();
-        bool ContainsRelation(Guid id);
-        void Update(RelationViewModel relation);
+
+        bool CheckPostalMask(string postalCode, string postalCodeFormat);
+        string ApplyPostalCodeMask(string postalCode, string postalCodeFormat);
+        void Create(RelationDTO relation);
+        Task<RelationDTO> GetOneAsync(Guid id);
+        Task<IEnumerable<RelationDTO>> GetRelationsAsync(RelationFilter filter);
+        Task<bool> CheckRelationExistence(Guid relationId);
+        void Update(RelationDTO relation);
         void Delete(params Guid[] identificators);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
@@ -9,7 +8,6 @@ namespace AndersenCoreApp.Models.DomainModels
     [Table("tblCountry")]
     public partial class Country
     {
-        [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -19,10 +17,11 @@ namespace AndersenCoreApp.Models.DomainModels
         public bool IsDefault { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Column("ISO3166_2")]
         public string Iso31662 { get; set; }
+        [Column("ISO3166_3")]
         public string Iso31663 { get; set; }
         public Guid? DefaultVatId { get; set; }
         public string PostalCodeFormat { get; set; }
-
     }
 }

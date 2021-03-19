@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
@@ -9,7 +8,6 @@ namespace AndersenCoreApp.Models.DomainModels
     [Table("tblAddressType")]
     public partial class AddressType
     {
-        [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }

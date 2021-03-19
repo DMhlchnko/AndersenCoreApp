@@ -7,11 +7,16 @@ namespace AndersenCoreApp.Services
 {
     public class CountryRepository : ICountryRepository
     {
-        private RelationContext db = new RelationContext("Server=(local)\\SQLEXPRESS;Database=test;Trusted_Connection=True;");
+        private RelationContext db = new RelationContext();
 
         public IQueryable<Country> GetAll()
         {
             return db.Countries.AsQueryable();
+        }
+
+        public Country GetOne(string name)
+        {
+            return db.Countries.FirstOrDefault(c => c.Name == name);
         }
 
         public bool Any(Guid id)

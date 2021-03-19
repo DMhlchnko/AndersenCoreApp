@@ -1,3 +1,4 @@
+using AndersenCoreApp.Infrastructure;
 using AndersenCoreApp.Interfaces.Repositories;
 using AndersenCoreApp.Interfaces.Services;
 using AndersenCoreApp.Services;
@@ -11,6 +12,7 @@ namespace AndersenCoreApp
 {
     public class Startup
     {
+        static string connectionString;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,9 +24,9 @@ namespace AndersenCoreApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IRelationRepository, RelationRepository>();
+            services.AddTransient<ICountryRepository, CountryRepository>();
+            services.AddTransient<IMapperConfigurator, MapperConfigurator>();
             services.AddScoped<IRelationService, RelationService>();
-            services.AddTransient<ICountryRepository, ICountryRepository>();
-
             services.AddControllers();
         }
 
@@ -46,6 +48,7 @@ namespace AndersenCoreApp
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
@@ -10,7 +9,6 @@ namespace AndersenCoreApp.Models.DomainModels
     [Table("tblCategory")]
     public partial class Category
     {
-        [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -38,6 +36,6 @@ namespace AndersenCoreApp.Models.DomainModels
         public DateTime? Timestamp2 { get; set; }
         public DateTime? Timestamp3 { get; set; }
         public DateTime? Timestamp4 { get; set; }
-        public virtual List<Relation> Relations { get; set; } = new List<Relation>();
+        public virtual List<RelationCategory> Relations { get; set; } = new List<RelationCategory>();
     }
 }

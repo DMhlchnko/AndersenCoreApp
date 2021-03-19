@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
@@ -10,7 +9,6 @@ namespace AndersenCoreApp.Models.DomainModels
     [Table("tblRelation")]
     public partial class Relation
     {
-        [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -119,8 +117,7 @@ namespace AndersenCoreApp.Models.DomainModels
         public Guid? ThirdPartyToUseForInvoicing { get; set; }
         public int? Flags { get; set; }
         public Guid? RelationAddressId { get; set; }
-        [ForeignKey("RelationAddressId")]
         public virtual RelationAddress RelationAddress { get; set; }
-        public virtual List<Category> Categories { get; set; } = new List<Category>();
+        public virtual List<RelationCategory> RelationCategories { get; set; } = new List<RelationCategory>();
     }
 }
