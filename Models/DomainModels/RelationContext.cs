@@ -32,6 +32,7 @@ namespace AndersenCoreApp.Models.DomainModels
                 .WithOne().HasForeignKey<RelationAddress>(r => r.CountryId);
         }
 
+        // TODO: Use startup configuration
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLazyLoadingProxies();

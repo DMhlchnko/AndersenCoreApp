@@ -15,19 +15,18 @@ namespace AndersenCoreApp.Services
         private readonly IRelationRepository _relationRepo;
         private readonly ICountryRepository _countryRepo;
         private readonly IMapper _viewModelMapper;
-        private readonly IMapper _relationMapper;
 
         public RelationService(IRelationRepository relations, ICountryRepository countries, IMapperConfigurator configurator)
         {
             _relationRepo = relations;
             _countryRepo = countries;
             _viewModelMapper = configurator.ConfigureMapperForViewModel();
-            _relationMapper = configurator.ConfigureMapperForRelation();
         }
 
         public async Task<bool> CheckRelationExistence(Guid relationId)
         {
             var result = await _relationRepo.HasAnyAsync(relationId);
+
             return result;
         }
 
@@ -35,6 +34,7 @@ namespace AndersenCoreApp.Services
         {
             var relation = await _relationRepo.GetOneAsync(id);
             var relationsViewModel = _viewModelMapper.Map<Relation, RelationDTO>(relation);
+
             return relationsViewModel;
         }
 
@@ -42,6 +42,7 @@ namespace AndersenCoreApp.Services
         {
             var relations = await _relationRepo.GetAllAsync(filter);
             var relationViewModels = _viewModelMapper.Map<IReadOnlyCollection<Relation>, IEnumerable<RelationDTO>>(relations);
+
             return relationViewModels;
         }
 
@@ -61,7 +62,7 @@ namespace AndersenCoreApp.Services
                 {
                     relation.PostalCode = ApplyPostalCodeMask(postalCode, postalCodeFormat);
                 }
-                var relationToCreate = _relationMapper.Map<RelationDTO, Relation>(relation);
+                var relationToCreate = _viewModelMapper.Map<RelationDTO, Relation>(relation);
                 _relationRepo.Create(relationToCreate);
             }
         }
@@ -74,7 +75,7 @@ namespace AndersenCoreApp.Services
             {
                 relation.PostalCode = ApplyPostalCodeMask(postalCode, postalCodeFormat);
             }
-            var relationToUpdate = _relationMapper.Map<RelationDTO, Relation>(relation);
+            var relationToUpdate = _viewModelMapper.Map<RelationDTO, Relation>(relation);
             _relationRepo.Update(relationToUpdate);
         }
 

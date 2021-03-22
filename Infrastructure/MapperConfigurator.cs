@@ -4,8 +4,10 @@ using AutoMapper;
 
 namespace AndersenCoreApp.Infrastructure
 {
+    /// <inheritdoc />
     public class MapperConfigurator : IMapperConfigurator
     {
+        /// <inheritdoc />
         public IMapper ConfigureMapperForViewModel()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Relation, RelationDTO>()
@@ -19,6 +21,7 @@ namespace AndersenCoreApp.Infrastructure
             return mapper;
         }
 
+        /// <inheritdoc />
         public IMapper ConfigureMapperForRelation()
         {
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<RelationDTO, Relation>()

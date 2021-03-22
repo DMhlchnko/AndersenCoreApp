@@ -7,7 +7,9 @@ namespace AndersenCoreApp.Interfaces.Repositories
     public interface ICountryRepository
     {
         IQueryable<Country> GetAll();
+
         Country GetOne(string name);
+
         bool Any(Guid id);
     }
 }

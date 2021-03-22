@@ -2,22 +2,25 @@
 {
     public class RelationFilter
     {
+        public RelationFilter(string filterByCategoryName, string sortByProperty, OrderBy order)
+        {
+            FilterByCategoryName = filterByCategoryName;
+            SortByProperty = sortByProperty;
+            Order = order;
+        }
+
+        //Move to Enum folder and separate file
         public enum OrderBy
         {
+            Default = 0,
             Ascending,
             Descending
         }
 
         public OrderBy Order { get; }
 
-        public readonly string filterByCategoryName;
-        public readonly string sortByProperty;
+        public string FilterByCategoryName { get; }
 
-        public RelationFilter(string category, string property, OrderBy order)
-        {
-            filterByCategoryName = category;
-            sortByProperty = property;
-            Order = order;
-        }
+        public string SortByProperty { get; }
     }
 }

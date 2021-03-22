@@ -62,11 +62,11 @@ namespace AndersenCoreApp.Services
         private async Task<IQueryable<Relation>> GetSortedAndFilteredRelations(RelationFilter filter)
         {
             var orderBy = filter.Order;
-            var orderProperty = filter.sortByProperty;
+            var sortByProperty = filter.SortByProperty;
             //doesn't work with string.Equals(r.Name,filter.filterByCategoryName,StringComparison.InvariantCultureIgnoreCase)
-            var category = await db.Categories.FirstOrDefaultAsync(c => c.Name.ToUpper() == filter.filterByCategoryName.ToUpper());
+            var category = await db.Categories.FirstOrDefaultAsync(c => c.Name.ToUpper() == filter.FilterByCategoryName.ToUpper());
             var query = db.Relations.Where(r => r.RelationCategories.Any(rc => rc.CategoryId == category.Id));
-            return (orderProperty.ToUpper()) switch
+            return (sortByProperty.ToUpper()) switch
             {
                 "NAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name),
                 "FULLNAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.FullName) : query.OrderByDescending(r => r.FullName),

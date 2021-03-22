@@ -21,10 +21,13 @@ namespace AndersenCoreApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<RelationDTO>> GetRelationsList(string filterByCategoryName = "Mijn Laadadressen", string sortByProperty = "name", OrderBy orderBy = OrderBy.Ascending)
+        public async Task<IEnumerable<RelationDTO>> GetRelationsList(string filterByCategoryName,
+            string sortByProperty,
+            OrderBy orderBy)
         {
-            var filter = CreateFiler(filterByCategoryName, sortByProperty, orderBy);
+            var filter = CreateFilter(filterByCategoryName, sortByProperty, orderBy);
             var relations = await relationService.GetRelationsAsync(filter);
+
             return relations;
         }
 
@@ -66,7 +69,8 @@ namespace AndersenCoreApp.Controllers
             return NoContent();
         }
 
-        private RelationFilter CreateFiler(string filterByCategoryName = "", string sortByProperty = "", OrderBy orderBy = OrderBy.Ascending)
+        //Move CreateRelationFilter to Helpers/RelationHelpers
+        private static RelationFilter CreateFilter(string filterByCategoryName = "", string sortByProperty = "", OrderBy orderBy = OrderBy.Ascending)
         {
             return new RelationFilter(filterByCategoryName, sortByProperty, orderBy);
         }
