@@ -8,7 +8,7 @@
             SortByProperty = sortByProperty;
             Order = order;
         }
- 
+
         public OrderBy Order { get; }
 
         public string FilterByCategoryName { get; }

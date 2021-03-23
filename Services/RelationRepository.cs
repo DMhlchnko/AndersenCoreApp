@@ -12,7 +12,7 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class RelationRepository : IRelationRepository
     {
-        private  RelationContext _db;
+        private RelationContext _db;
 
         public RelationRepository(RelationContext db)
         {
@@ -29,12 +29,12 @@ namespace AndersenCoreApp.Services
         public async Task<IEnumerable<Relation>> DeleteAsync(params Guid[] identificators)
         {
             List<Relation> relationsToDelete = new List<Relation>();
-            foreach(var id in identificators)
+            foreach (var id in identificators)
             {
                 var relationToDelete = await _db.Relations.FirstOrDefaultAsync(r => r.Id == id);
                 relationsToDelete.Add(relationToDelete);
             }
-            foreach(var relation in relationsToDelete)
+            foreach (var relation in relationsToDelete)
             {
                 relation.IsDisabled = true;
                 _db.Entry(relation).State = EntityState.Modified;

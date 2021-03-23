@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static AndersenCoreApp.Infrastructure.RelationFilter;
 
 namespace AndersenCoreApp.Controllers
 {

@@ -3,7 +3,6 @@ using AndersenCoreApp.Models.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Services
@@ -11,7 +10,7 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class CountryRepository : ICountryRepository
     {
-        private  RelationContext _db;
+        private RelationContext _db;
 
         public CountryRepository(RelationContext db)
         {

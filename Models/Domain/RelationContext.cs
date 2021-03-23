@@ -29,7 +29,7 @@ namespace AndersenCoreApp.Models.Domain
             modelBuilder.Entity<RelationAddress>().HasOne(r => r.Country)
                 .WithOne().HasForeignKey<RelationAddress>(r => r.CountryId);
 
-             base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

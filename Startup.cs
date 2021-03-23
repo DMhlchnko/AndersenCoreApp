@@ -1,4 +1,6 @@
 using AndersenCoreApp.Helpers;
+using AndersenCoreApp.Infrastructure.Formatters;
+using AndersenCoreApp.Interfaces.Formatters;
 using AndersenCoreApp.Interfaces.Helpers;
 using AndersenCoreApp.Interfaces.Repositories;
 using AndersenCoreApp.Interfaces.Services;
@@ -29,11 +31,12 @@ namespace AndersenCoreApp
         {
             services.AddDbContext<RelationContext>(options =>
                 options.UseSqlServer(_connString));
-            
+
             services.AddTransient<IRelationRepository, RelationRepository>();
             services.AddTransient<ICountryRepository, CountryRepository>();
             services.AddScoped<IRelationService, RelationService>();
             services.AddTransient<IRelationHelpers, RelationHelpers>();
+            services.AddTransient<IPostalCodeFormatter, PostalCodeFormatter>();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
         }
