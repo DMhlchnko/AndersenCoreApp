@@ -1,8 +1,9 @@
 ﻿using AndersenCoreApp.Infrastructure;
+using AndersenCoreApp.Interfaces.Formatters;
 using AndersenCoreApp.Interfaces.Repositories;
 using AndersenCoreApp.Interfaces.Services;
-using AndersenCoreApp.Models.DomainModels;
-using AndersenCoreApp.Models.ModelsDTO;
+using AndersenCoreApp.Models.Domain;
+using AndersenCoreApp.Models.DTO;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -10,84 +11,93 @@ using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Services
 {
+    /// <inheritdoc />
     public class RelationService : IRelationService
     {
         private readonly IRelationRepository _relationRepo;
         private readonly ICountryRepository _countryRepo;
-        private readonly IMapper _viewModelMapper;
+        private readonly IMapper _mapper;
+        private readonly IPostalCodeFormatter _formatter;
 
-        public RelationService(IRelationRepository relations, ICountryRepository countries, IMapperConfigurator configurator)
+        public RelationService(IRelationRepository relations, ICountryRepository countries, IMapper mapper, IPostalCodeFormatter formatter)
         {
             _relationRepo = relations;
             _countryRepo = countries;
-            _viewModelMapper = configurator.ConfigureMapperForViewModel();
+            _mapper = mapper;
+            _formatter = formatter;
         }
 
-        public async Task<bool> CheckRelationExistence(Guid relationId)
+        /// <inheritdoc />
+        public async Task<bool> CheckRelationExistenceAsync(Guid relationId)
         {
             var result = await _relationRepo.HasAnyAsync(relationId);
-
             return result;
         }
 
+        /// <inheritdoc />
         public async Task<RelationDTO> GetOneAsync(Guid id)
         {
             var relation = await _relationRepo.GetOneAsync(id);
-            var relationsViewModel = _viewModelMapper.Map<Relation, RelationDTO>(relation);
+            var relationsViewModel = _mapper.Map<RelationDTO>(relation);
 
             return relationsViewModel;
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> GetRelationsAsync(RelationFilter filter)
         {
             var relations = await _relationRepo.GetAllAsync(filter);
-            var relationViewModels = _viewModelMapper.Map<IReadOnlyCollection<Relation>, IEnumerable<RelationDTO>>(relations);
+            var relationViewModels = _mapper.Map<IEnumerable<RelationDTO>>(relations);
 
             return relationViewModels;
         }
 
-        //TODO write an algorithm for checking postal mask
-        public bool CheckPostalMask(string postalCodeFormat, string postalCode)
+        /// <inheritdoc />
+        public async Task<RelationDTO> CreateAsync(RelationDTO relation)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Create(RelationDTO relation)
-        {
+            Country country;
+            string postalCodeFormat;
+            string postalCode;
+            Relation relationToCreate;
             if (relation != null)
             {
-                var postalCodeFormat = _countryRepo.GetOne(relation.Country).PostalCodeFormat;
-                var postalCode = relation?.PostalCode;
-                if (CheckPostalMask(postalCodeFormat, postalCode))
-                {
-                    relation.PostalCode = ApplyPostalCodeMask(postalCode, postalCodeFormat);
-                }
-                var relationToCreate = _viewModelMapper.Map<RelationDTO, Relation>(relation);
-                _relationRepo.Create(relationToCreate);
+                country = await _countryRepo.GetOneAsync(relation.Country);
+                postalCodeFormat = country.PostalCodeFormat;
+                postalCode = relation.PostalCode;
+                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
             }
+            relationToCreate = await _relationRepo.CreateAsync(_mapper.Map<Relation>(relation));
+            relation = _mapper.Map<RelationDTO>(relationToCreate);
+            return relation;
         }
 
-        public void Update(RelationDTO relation)
+        /// <inheritdoc />
+        public async Task<RelationDTO> UpdateAsync(RelationDTO relation)
         {
-            var postalCodeFormat = _countryRepo.GetOne(relation.Country).PostalCodeFormat;
-            var postalCode = relation?.PostalCode;
-            if (CheckPostalMask(postalCodeFormat, postalCode))
+            Country country;
+            string postalCodeFormat;
+            string postalCode;
+            Relation updatedRelation;
+            if (relation != null)
             {
-                relation.PostalCode = ApplyPostalCodeMask(postalCode, postalCodeFormat);
+                country = await _countryRepo.GetOneAsync(relation.Country);
+                postalCodeFormat = country.PostalCodeFormat;
+                postalCode = relation.PostalCode;
+                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
             }
-            var relationToUpdate = _viewModelMapper.Map<RelationDTO, Relation>(relation);
-            _relationRepo.Update(relationToUpdate);
+            updatedRelation = _mapper.Map<Relation>(relation);
+            updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
+            relation = _mapper.Map<RelationDTO>(updatedRelation);
+            return relation;
         }
 
-        public void Delete(params Guid[] identificators)
+        /// <inheritdoc />
+        public async Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators)
         {
-            _relationRepo.Delete(identificators);
+            var relations = await _relationRepo.DeleteAsync(identificators);
+            var deletedRelations = _mapper.Map<IEnumerable<RelationDTO>>(relations);
+            return deletedRelations;
         }
 
-        //TODO write an algorithm for applying postal mask
-        public string ApplyPostalCodeMask(string postalCode, string postalCodeFormat)
-        {
-            return postalCode;
-        }
     }
 }

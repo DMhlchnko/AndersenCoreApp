@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#nullable disable
-
-namespace AndersenCoreApp.Models.DomainModels
+namespace AndersenCoreApp.Models.Domain
 {
     [Table("tblAddressType")]
-    public partial class AddressType
+    public class AddressType
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }

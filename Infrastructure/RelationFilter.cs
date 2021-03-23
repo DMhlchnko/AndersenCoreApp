@@ -8,15 +8,7 @@
             SortByProperty = sortByProperty;
             Order = order;
         }
-
-        //Move to Enum folder and separate file
-        public enum OrderBy
-        {
-            Default = 0,
-            Ascending,
-            Descending
-        }
-
+ 
         public OrderBy Order { get; }
 
         public string FilterByCategoryName { get; }

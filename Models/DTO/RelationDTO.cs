@@ -1,4 +1,4 @@
-﻿namespace AndersenCoreApp.Models.ModelsDTO
+﻿namespace AndersenCoreApp.Models.DTO
 {
     public class RelationDTO
     {

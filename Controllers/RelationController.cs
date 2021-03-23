@@ -1,6 +1,7 @@
 ﻿using AndersenCoreApp.Infrastructure;
+using AndersenCoreApp.Interfaces.Helpers;
 using AndersenCoreApp.Interfaces.Services;
-using AndersenCoreApp.Models.ModelsDTO;
+using AndersenCoreApp.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,13 @@ namespace AndersenCoreApp.Controllers
     [ApiController]
     public class RelationController : ControllerBase
     {
-        private IRelationService relationService;
+        private IRelationService _relationService;
+        private IRelationHelpers _relationHelper;
 
-        public RelationController(IRelationService service)
+        public RelationController(IRelationService service, IRelationHelpers helper)
         {
-            relationService = service;
+            _relationService = service;
+            _relationHelper = helper;
         }
 
         [HttpGet]
@@ -25,8 +28,8 @@ namespace AndersenCoreApp.Controllers
             string sortByProperty,
             OrderBy orderBy)
         {
-            var filter = CreateFilter(filterByCategoryName, sortByProperty, orderBy);
-            var relations = await relationService.GetRelationsAsync(filter);
+            var filter = _relationHelper.CreateRelationFilter(filterByCategoryName, sortByProperty, orderBy);
+            var relations = await _relationService.GetRelationsAsync(filter);
 
             return relations;
         }
@@ -34,7 +37,7 @@ namespace AndersenCoreApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<RelationDTO>> GetRelation(Guid id)
         {
-            var relation = await relationService.GetOneAsync(id);
+            var relation = await _relationService.GetOneAsync(id);
             if (relation == null)
             {
                 return NotFound();
@@ -44,35 +47,33 @@ namespace AndersenCoreApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateRelation(RelationDTO relation)
+        public async Task<ActionResult> CreateRelation(RelationDTO relation)
         {
             if (ModelState.IsValid)
             {
-                relationService.Create(relation);
-                return Ok(relation);
+                var createdRelation = await _relationService.CreateAsync(relation);
+                return Ok(createdRelation);
             }
 
             return BadRequest(ModelState);
         }
 
         [HttpPut]
-        public ActionResult Update(RelationDTO relation)
+        public async Task<ActionResult> UpdateAsync(RelationDTO relation)
         {
-            relationService.Update(relation);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var updatedRelation = await _relationService.UpdateAsync(relation);
+                return Ok(updatedRelation);
+            }
+            return BadRequest(relation);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete(Guid id)
+        public async Task<ActionResult> DeleteAsync(params Guid[] identificators)
         {
-            relationService.Delete(id);
-            return NoContent();
-        }
-
-        //Move CreateRelationFilter to Helpers/RelationHelpers
-        private static RelationFilter CreateFilter(string filterByCategoryName = "", string sortByProperty = "", OrderBy orderBy = OrderBy.Ascending)
-        {
-            return new RelationFilter(filterByCategoryName, sortByProperty, orderBy);
+            var deletedRelations = await _relationService.DeleteAsync(identificators);
+            return Ok(deletedRelations);
         }
     }
 }

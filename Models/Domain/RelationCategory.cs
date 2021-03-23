@@ -1,7 +1,6 @@
-﻿
-using System;
+﻿using System;
 
-namespace AndersenCoreApp.Models.DomainModels
+namespace AndersenCoreApp.Models.Domain
 {
     public class RelationCategory
     {

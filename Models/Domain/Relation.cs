@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#nullable disable
-
-namespace AndersenCoreApp.Models.DomainModels
+namespace AndersenCoreApp.Models.Domain
 {
     [Table("tblRelation")]
-    public partial class Relation
+    public class Relation
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }

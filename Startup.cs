@@ -1,7 +1,8 @@
-using AndersenCoreApp.Infrastructure;
+using AndersenCoreApp.Helpers;
+using AndersenCoreApp.Interfaces.Helpers;
 using AndersenCoreApp.Interfaces.Repositories;
 using AndersenCoreApp.Interfaces.Services;
-using AndersenCoreApp.Models.DomainModels;
+using AndersenCoreApp.Models.Domain;
 using AndersenCoreApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,24 +15,26 @@ namespace AndersenCoreApp
 {
     public class Startup
     {
-        static string connectionString;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _connString = Configuration.GetConnectionString("RelationConnection");
         }
 
+        private readonly string _connString;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<RelationContext>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("RelationConnection")));
-
+            services.AddDbContext<RelationContext>(options =>
+                options.UseSqlServer(_connString));
+            
             services.AddTransient<IRelationRepository, RelationRepository>();
             services.AddTransient<ICountryRepository, CountryRepository>();
-            services.AddTransient<IMapperConfigurator, MapperConfigurator>();
             services.AddScoped<IRelationService, RelationService>();
+            services.AddTransient<IRelationHelpers, RelationHelpers>();
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
         }
 
@@ -53,7 +56,6 @@ namespace AndersenCoreApp
             {
                 endpoints.MapControllers();
             });
-
         }
     }
 }

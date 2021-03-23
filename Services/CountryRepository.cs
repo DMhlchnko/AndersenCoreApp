@@ -1,27 +1,41 @@
 ﻿using AndersenCoreApp.Interfaces.Repositories;
-using AndersenCoreApp.Models.DomainModels;
+using AndersenCoreApp.Models.Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Services
 {
+    /// <inheritdoc />
     public class CountryRepository : ICountryRepository
     {
-        private RelationContext db = new RelationContext();
+        private  RelationContext _db;
 
-        public IQueryable<Country> GetAll()
+        public CountryRepository(RelationContext db)
         {
-            return db.Countries.AsQueryable();
+            _db = db;
         }
 
-        public Country GetOne(string name)
+        /// <inheritdoc />
+        public async Task<IReadOnlyCollection<Country>> GetAllAsync()
         {
-            return db.Countries.FirstOrDefault(c => c.Name == name);
+            var countries = await _db.Countries.ToListAsync();
+            return countries;
         }
 
-        public bool Any(Guid id)
+        /// <inheritdoc />
+        public async Task<Country> GetOneAsync(string name)
         {
-            return db.Countries.Any(c => c.Id == id);
+            var country = await _db.Countries.FirstOrDefaultAsync(c => c.Name == name);
+            return country;
+        }
+
+        /// <inheritdoc />
+        public async Task<bool> HasAnyAsync(Guid id)
+        {
+            return await _db.Countries.AnyAsync(c => c.Id == id);
         }
     }
 }

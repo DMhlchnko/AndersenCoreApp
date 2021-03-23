@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#nullable disable
-
-namespace AndersenCoreApp.Models.DomainModels
+namespace AndersenCoreApp.Models.Domain
 {
     [Table("tblRelationAddress")]
-    public partial class RelationAddress
+    public class RelationAddress
     {
         public Guid Id { get; set; }
         public Guid? AddressTypeId { get; set; }
