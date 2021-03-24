@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace AndersenCoreApp
 {
@@ -39,6 +40,15 @@ namespace AndersenCoreApp
             services.AddTransient<IRelationHelpers, RelationHelpers>();
             services.AddTransient<IPostalCodeFormatter, PostalCodeFormatter>();
             services.AddAutoMapper(typeof(Startup));
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Relation API",
+                    Description = "Api for attached db"
+                });
+            });
             services.AddControllers();
         }
 
@@ -49,6 +59,14 @@ namespace AndersenCoreApp
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Relation API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 

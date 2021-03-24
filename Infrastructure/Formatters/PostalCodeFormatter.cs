@@ -22,9 +22,13 @@ namespace AndersenCoreApp.Infrastructure.Formatters
         /// <inheritdoc />
         public bool CheckPostalMask(string postalCodeFormat, string postalCode)
         {
-            var regularExpression = CreateRegularExpression(postalCodeFormat);
-            var regEx = new Regex(regularExpression, RegexOptions.IgnoreCase);
-            return regEx.IsMatch(postalCode);
+            if (!string.IsNullOrEmpty(postalCodeFormat))
+            {
+                var regularExpression = CreateRegularExpression(postalCodeFormat);
+                var regEx = new Regex(regularExpression, RegexOptions.IgnoreCase);
+                return regEx.IsMatch(postalCode);
+            }
+            return false;
         }
 
         /// <inheritdoc />
