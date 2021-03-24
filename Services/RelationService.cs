@@ -55,18 +55,15 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> CreateAsync(RelationDTO relation)
         {
-            Country country;
-            string postalCodeFormat;
-            string postalCode;
-            Relation relationToCreate;
-            if (relation != null)
+            if(relation == null)
             {
-                country = await _countryRepo.GetOneAsync(relation.Country);
-                postalCodeFormat = country.PostalCodeFormat;
-                postalCode = relation.PostalCode;
-                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+                throw new AgrumentNullException($"{nameof(relation)} is null.");
             }
-            relationToCreate = await _relationRepo.CreateAsync(_mapper.Map<Relation>(relation));
+            var country = await _countryRepo.GetOneAsync(relation.Country);
+            var postalCodeFormat = country.PostalCodeFormat;
+            var postalCode = relation.PostalCode;
+            relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+            var relationToCreate = await _relationRepo.CreateAsync(_mapper.Map<Relation>(relation));
             relation = _mapper.Map<RelationDTO>(relationToCreate);
             return relation;
         }

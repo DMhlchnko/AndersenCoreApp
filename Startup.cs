@@ -20,17 +20,15 @@ namespace AndersenCoreApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _connString = Configuration.GetConnectionString("RelationConnection");
         }
 
-        private readonly string _connString;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<RelationContext>(options =>
-                options.UseSqlServer(_connString));
+                options.UseSqlServer(Configuration.GetConnectionString("RelationConnection")).UseLazyLoadingProxies());
 
             services.AddTransient<IRelationRepository, RelationRepository>();
             services.AddTransient<ICountryRepository, CountryRepository>();
