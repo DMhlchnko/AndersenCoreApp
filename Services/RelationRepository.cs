@@ -46,13 +46,10 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<Relation> CreateAsync(Relation relation)
         {
-            var creatingRelation = await _db.Relations.AnyAsync(r => r.Id == relation.Id);
-            if (!creatingRelation)
-            {
-                _db.Relations.Add(relation);
-                await _db.SaveChangesAsync();
-            }
-            return await _db.Relations.FirstOrDefaultAsync(r => r.Id == relation.Id);
+            _db.Relations.Add(relation);
+            await _db.SaveChangesAsync();
+            
+            return relation;
         }
 
         /// <inheritdoc />

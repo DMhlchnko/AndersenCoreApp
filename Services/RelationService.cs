@@ -65,21 +65,34 @@ namespace AndersenCoreApp.Services
             if (relation != null)
             {
                 country = await _countryRepo.GetOneAsync(relation.Country);
-                postalCodeFormat = country.PostalCodeFormat;
-                postalCode = relation.PostalCode;
-                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-                var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
-                    relation.StreetNumber, relation.PostalCode, country.Id);
-                relationToCreate = new Relation
+                if(country != null)
                 {
-                    Name = relation.Name,
-                    FullName = relation.FullName,
-                    TelephoneNumber = relation.TelephoneNumber,
-                    EmailAddress = relation.EMail,
-                    RelationAddressId = relationAddress.Id
-                };
-                relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
-                relation = _mapper.Map<RelationDTO>(relationToCreate);
+                    postalCodeFormat = country.PostalCodeFormat ?? "";
+                    postalCode = relation.PostalCode;
+                    relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+                    var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
+                        relation.StreetNumber, relation.PostalCode, country.Id);
+                    relationToCreate = new Relation
+                    {
+                        Id = relation.Id,
+                        Name = relation.Name,
+                        FullName = relation.FullName,
+                        TelephoneNumber = relation.TelephoneNumber,
+                        EmailAddress = relation.EMail,
+                        RelationAddressId = relationAddress.Id,
+                        RelationAddress = relationAddress,
+                        CreatedAt = DateTime.Now,
+                        CreatedBy = "admin",
+                        IsDisabled = false,
+                        IsMe = false,
+                        IsTemporary = false,
+                        PaymentViaAutomaticDebit = false,
+                        InvoiceDateGenerationOptions = 1,
+                        InvoiceGroupByOptions = 1
+                    };
+                    relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
+                    relation = _mapper.Map<RelationDTO>(relationToCreate);
+                }                
             }
 
             return relation;

@@ -27,7 +27,7 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<Country> GetOneAsync(string name)
         {
-            var country = await _db.Countries.FirstOrDefaultAsync(c => c.Name == name);
+            var country = await _db.Countries.FirstOrDefaultAsync(c => c.Name.ToUpper() == name.ToUpper());
             return country;
         }
 
