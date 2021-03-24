@@ -1,21 +1,17 @@
-using AndersenCoreApp.Abstractions;
-using AndersenCoreApp.Concrete;
-using AndersenCoreApp.EF_Abstractions;
-using AndersenCoreApp.Models;
-using AndersenCoreApp.Repositories;
+using AndersenCoreApp.Helpers;
+using AndersenCoreApp.Infrastructure.Formatters;
+using AndersenCoreApp.Interfaces.Formatters;
+using AndersenCoreApp.Interfaces.Helpers;
+using AndersenCoreApp.Interfaces.Repositories;
+using AndersenCoreApp.Interfaces.Services;
+using AndersenCoreApp.Models.Domain;
+using AndersenCoreApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AndersenCoreApp
 {
@@ -31,11 +27,16 @@ namespace AndersenCoreApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IRepository<Relation>, RelationRepository>();
-            services.AddTransient<IRelationService, RelationService>();
+            services.AddDbContext<RelationContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("RelationConnection")).UseLazyLoadingProxies());
 
+            services.AddTransient<IRelationRepository, RelationRepository>();
+            services.AddTransient<ICountryRepository, CountryRepository>();
+            services.AddScoped<IRelationService, RelationService>();
+            services.AddTransient<IRelationHelpers, RelationHelpers>();
+            services.AddTransient<IPostalCodeFormatter, PostalCodeFormatter>();
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

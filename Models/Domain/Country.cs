@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#nullable disable
-
-namespace AndersenCoreApp.Models
+namespace AndersenCoreApp.Models.Domain
 {
     [Table("tblCountry")]
-    public partial class Country
+    public class Country
     {
-       [Key]
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -20,10 +15,11 @@ namespace AndersenCoreApp.Models
         public bool IsDefault { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        [Column("ISO3166_2")]
         public string Iso31662 { get; set; }
+        [Column("ISO3166_3")]
         public string Iso31663 { get; set; }
         public Guid? DefaultVatId { get; set; }
         public string PostalCodeFormat { get; set; }
-
     }
 }

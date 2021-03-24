@@ -1,15 +1,11 @@
-﻿using AndersenCoreApp.Abstractions;
-using AndersenCoreApp.EF_Abstractions;
-using AndersenCoreApp.Models;
-using AndersenCoreApp.ViewDTO;
-using AutoMapper;
+﻿using AndersenCoreApp.Infrastructure;
+using AndersenCoreApp.Interfaces.Helpers;
+using AndersenCoreApp.Interfaces.Services;
+using AndersenCoreApp.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace AndersenCoreApp.Controllers
 {
@@ -17,73 +13,66 @@ namespace AndersenCoreApp.Controllers
     [ApiController]
     public class RelationController : ControllerBase
     {
+        private IRelationService _relationService;
+        private IRelationHelpers _relationHelper;
 
-        private IRelationService relationService;
-
-        public RelationController(IRelationService service)
+        public RelationController(IRelationService service, IRelationHelpers helper)
         {
-            relationService = service;
+            _relationService = service;
+            _relationHelper = helper;
         }
 
-        
         [HttpGet]
-        public List<RelationDTO> Get(string orderProperty ="", string orderCategory = "")
+        public async Task<IEnumerable<RelationDTO>> GetRelationsList(string filterByCategoryName,
+            string sortByProperty,
+            OrderBy orderBy)
         {
-            var relations = relationService.GetAll();
-            if (!string.IsNullOrEmpty(orderProperty))
-            {
-                relations = relationService.GetSortedListByProperties(relations, orderProperty);
-            }
-            if (!string.IsNullOrEmpty(orderCategory))
-            {
-                 relations = relationService.GetListByCategories(relations, orderCategory);
-            }
-            var mapper = relationService.ConfigureMapperForDto();
-            var relationsDTO = mapper.Map<List<Relation>, List<RelationDTO>>(relations.ToList());
-            return relationsDTO;
+            var filter = _relationHelper.CreateRelationFilter(filterByCategoryName, sortByProperty, orderBy);
+            var relations = await _relationService.GetRelationsAsync(filter);
 
-
+            return relations;
         }
 
-        
         [HttpGet("{id}")]
-        public RelationDTO Get(Guid id)
+        public async Task<ActionResult<RelationDTO>> GetRelation(Guid id)
         {
-             
-            var relation = relationService.GetOne(id);
-            var mapper = relationService.ConfigureMapperForDto();
-            RelationDTO model = mapper.Map<Relation, RelationDTO>(relation);
-            return model;
+            var relation = await _relationService.GetOneAsync(id);
+            if (relation == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(relation);
         }
 
-        
         [HttpPost]
-        public void Post(Relation relation)
+        public async Task<ActionResult> CreateRelation(RelationDTO relation)
         {
             if (ModelState.IsValid)
             {
-                relationService.Create(relation);
+                var createdRelation = await _relationService.CreateAsync(relation);
+                return Ok(createdRelation);
             }
+
+            return BadRequest(ModelState);
         }
 
-        
-        [HttpPut("{id}")]
-        public void Put(Guid id, Relation relation)
+        [HttpPut]
+        public async Task<ActionResult> UpdateAsync(RelationDTO relation)
         {
             if (ModelState.IsValid)
             {
-                relationService.Update(relation);
+                var updatedRelation = await _relationService.UpdateAsync(relation);
+                return Ok(updatedRelation);
             }
+            return BadRequest(relation);
         }
 
-       
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public async Task<ActionResult> DeleteAsync(params Guid[] identificators)
         {
-            relationService.Delete(id);
+            var deletedRelations = await _relationService.DeleteAsync(identificators);
+            return Ok(deletedRelations);
         }
-
-        
-
     }
 }
