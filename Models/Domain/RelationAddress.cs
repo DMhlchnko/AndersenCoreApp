@@ -9,7 +9,7 @@ namespace AndersenCoreApp.Models.Domain
         public Guid Id { get; set; }
         public Guid? AddressTypeId { get; set; }
         public string Street { get; set; }
-        public int? Number { get; set; }
+        public int Number { get; set; }
         public string NumberSuffix { get; set; }
         public string City { get; set; }
         public string Province { get; set; }

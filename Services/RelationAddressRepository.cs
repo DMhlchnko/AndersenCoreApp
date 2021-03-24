@@ -40,11 +40,16 @@ namespace AndersenCoreApp.Services
         }
 
         /// <inheritdoc />
-        public async Task<RelationAddress> UpdateAsync(RelationAddress relationAddress)
+        public async Task<RelationAddress> UpdateAsync(string city, string street, int streetNumber, string postalCode,Guid relationAddressId)
         {
-            _db.Entry(relationAddress).State = EntityState.Modified;
+            var relationAddressToUpdate = await _db.RelationAddresses.FirstOrDefaultAsync(ra => ra.Id == relationAddressId);
+            relationAddressToUpdate.City = city;
+            relationAddressToUpdate.Street = street;
+            relationAddressToUpdate.Number = streetNumber;
+            relationAddressToUpdate.PostalCode = postalCode;
+            _db.Entry(relationAddressToUpdate).State = EntityState.Modified;
             await _db.SaveChangesAsync();
-            return relationAddress;
+            return relationAddressToUpdate;
         }
     }
 }

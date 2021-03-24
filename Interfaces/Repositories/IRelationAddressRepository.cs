@@ -21,7 +21,7 @@ namespace AndersenCoreApp.Interfaces.Repositories
         /// Updates relation address 
         /// </summary>
         /// <returns>Updated relation address</returns>
-        Task<RelationAddress> UpdateAsync(RelationAddress relationAddress);
+        Task<RelationAddress> UpdateAsync(string city, string street, int streetNumber, string postalCode, Guid relationAddressId);
 
         /// <summary>
         /// Returns relation address by it's id

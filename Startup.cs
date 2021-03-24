@@ -31,7 +31,7 @@ namespace AndersenCoreApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<RelationContext>(options =>
-                options.UseSqlServer(_connString));
+                options.UseSqlServer(_connString).UseLazyLoadingProxies());
 
             services.AddTransient<IRelationRepository, RelationRepository>();
             services.AddTransient<ICountryRepository, CountryRepository>();

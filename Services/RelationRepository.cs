@@ -36,9 +36,12 @@ namespace AndersenCoreApp.Services
             }
             foreach (var relation in relationsToDelete)
             {
-                relation.IsDisabled = true;
-                _db.Entry(relation).State = EntityState.Modified;
-                await _db.SaveChangesAsync();
+                if(relation.IsDisabled != true)
+                {
+                    relation.IsDisabled = true;
+                    _db.Entry(relation).State = EntityState.Modified;
+                    await _db.SaveChangesAsync();
+                }
             }
             return relationsToDelete;
         }
@@ -46,7 +49,7 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<Relation> CreateAsync(Relation relation)
         {
-            _db.Relations.Add(relation);
+            await _db.Relations.AddAsync(relation);
             await _db.SaveChangesAsync();
             
             return relation;

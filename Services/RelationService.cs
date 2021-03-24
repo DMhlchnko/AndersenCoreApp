@@ -102,18 +102,25 @@ namespace AndersenCoreApp.Services
         public async Task<RelationDTO> UpdateAsync(RelationDTO relation)
         {
             Country country;
+            Relation relationToUpdate;
             string postalCodeFormat;
             string postalCode;
-            Relation updatedRelation = new Relation();
             if (relation != null)
             {
                 country = await _countryRepo.GetOneAsync(relation.Country);
-                postalCodeFormat = country.PostalCodeFormat;
+                relationToUpdate = await _relationRepo.GetOneAsync(relation.Id);
+                postalCodeFormat = country.PostalCodeFormat ?? "";
                 postalCode = relation.PostalCode;
                 relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-                updatedRelation = _mapper.Map<Relation>(relation);
-                updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
-                relation = _mapper.Map<RelationDTO>(updatedRelation);
+                var updatedRelationAddress = await _relationAddressRepo.UpdateAsync(relation.City, relation.Street,
+                    relation.StreetNumber, relation.PostalCode, relationToUpdate.RelationAddressId);
+                relationToUpdate.Name = relation.Name;
+                relationToUpdate.FullName = relation.FullName;
+                relationToUpdate.TelephoneNumber = relation.TelephoneNumber;
+                relationToUpdate.EmailAddress = relation.EMail;
+                relationToUpdate.RelationAddress = updatedRelationAddress;
+                relationToUpdate = await _relationRepo.UpdateAsync(relationToUpdate);
+                relation = _mapper.Map<RelationDTO>(relationToUpdate);
             }
             
             return relation;
@@ -122,10 +129,14 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators)
         {
+            List<RelationDTO> deletedRelations = new List<RelationDTO>();
             var relations = await _relationRepo.DeleteAsync(identificators);
-            var deletedRelations = _mapper.Map<IEnumerable<RelationDTO>>(relations);
+            foreach(var relation in relations)
+            {
+                var relationDTO = _mapper.Map<RelationDTO>(relation);
+                deletedRelations.Add(relationDTO);
+            }
             return deletedRelations;
         }
-
     }
 }
