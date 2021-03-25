@@ -10,7 +10,7 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class CountryRepository : ICountryRepository
     {
-        private RelationContext _db;
+        private readonly RelationContext _db;
 
         public CountryRepository(RelationContext db)
         {
@@ -28,6 +28,7 @@ namespace AndersenCoreApp.Services
         public async Task<Country> GetOneAsync(string name)
         {
             var country = await _db.Countries.FirstOrDefaultAsync(c => c.Name.ToUpper() == name.ToUpper());
+
             return country;
         }
 

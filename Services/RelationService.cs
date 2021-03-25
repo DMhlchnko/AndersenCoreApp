@@ -58,21 +58,21 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> CreateAsync(RelationDTO relation)
         {
-            Country country;
-            string postalCodeFormat;
-            string postalCode;
-            Relation relationToCreate;
-            if (relation != null)
+            if(relation == null)
             {
-                country = await _countryRepo.GetOneAsync(relation.Country);
-                if(country != null)
-                {
-                    postalCodeFormat = country.PostalCodeFormat ?? "";
-                    postalCode = relation.PostalCode;
-                    relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-                    var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
+                throw new AgrumentNullException($"{nameof(relation)} is null.");
+            }
+            var country = await _countryRepo.GetOneAsync(relation.Country);
+            if(country == null)
+            {
+                throw new AgrumentNullException($"{nameof(country)} is null.");
+            }
+            var postalCodeFormat = country.PostalCodeFormat;
+            var postalCode = relation.PostalCode;
+            relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+            var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
                         relation.StreetNumber, relation.PostalCode, country.Id);
-                    relationToCreate = new Relation
+            relationToCreate = new Relation
                     {
                         Id = relation.Id,
                         Name = relation.Name,
@@ -90,10 +90,8 @@ namespace AndersenCoreApp.Services
                         InvoiceDateGenerationOptions = 1,
                         InvoiceGroupByOptions = 1
                     };
-                    relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
+            relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
                     relation = _mapper.Map<RelationDTO>(relationToCreate);
-                }                
-            }
 
             return relation;
         }
@@ -101,16 +99,12 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> UpdateAsync(RelationDTO relation)
         {
-            Country country;
-            Relation relationToUpdate;
-            string postalCodeFormat;
-            string postalCode;
             if (relation != null)
             {
-                country = await _countryRepo.GetOneAsync(relation.Country);
-                relationToUpdate = await _relationRepo.GetOneAsync(relation.Id);
-                postalCodeFormat = country.PostalCodeFormat ?? "";
-                postalCode = relation.PostalCode;
+                var country = await _countryRepo.GetOneAsync(relation.Country);
+                var relationToUpdate = await _relationRepo.GetOneAsync(relation.Id);
+                var postalCodeFormat = country.PostalCodeFormat ?? "";
+                var postalCode = relation.PostalCode;
                 relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
                 var updatedRelationAddress = await _relationAddressRepo.UpdateAsync(relation.City, relation.Street,
                     relation.StreetNumber, relation.PostalCode, relationToUpdate.RelationAddressId);
@@ -122,13 +116,14 @@ namespace AndersenCoreApp.Services
                 relationToUpdate = await _relationRepo.UpdateAsync(relationToUpdate);
                 relation = _mapper.Map<RelationDTO>(relationToUpdate);
             }
-            
+
             return relation;
         }
 
         /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators)
         {
+
             List<RelationDTO> deletedRelations = new List<RelationDTO>();
             var relations = await _relationRepo.DeleteAsync(identificators);
             foreach(var relation in relations)
@@ -138,5 +133,6 @@ namespace AndersenCoreApp.Services
             }
             return deletedRelations;
         }
+      
     }
 }
