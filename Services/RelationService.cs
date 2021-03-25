@@ -69,7 +69,7 @@ namespace AndersenCoreApp.Services
             {
                 throw new ArgumentNullException($"{nameof(relation)} is null.");
             }
-
+            
             //1. Getting country for inputed relation.
             var country = await _countryRepository.GetOneAsync(relation.Country);
             if (country == null)
@@ -153,6 +153,7 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators)
         {
+
             List<RelationDTO> deletedRelations = new List<RelationDTO>();
             var relations = await _relationRepository.DeleteAsync(identificators);
             foreach(var relation in relations)
@@ -162,5 +163,6 @@ namespace AndersenCoreApp.Services
             }
             return deletedRelations;
         }
+      
     }
 }

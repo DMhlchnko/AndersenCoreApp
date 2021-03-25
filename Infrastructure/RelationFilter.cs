@@ -14,6 +14,7 @@
             SortByProperty = sortByProperty;
             Order = order;
         }
+
         /// <summary>
         /// Represents an order of sorting
         /// </summary>
