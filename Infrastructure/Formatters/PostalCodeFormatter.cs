@@ -10,20 +10,25 @@ namespace AndersenCoreApp.Infrastructure.Formatters
     public class PostalCodeFormatter : IPostalCodeFormatter
     {
         /// <inheritdoc />
-        public RelationDTO ApplyPostalCodeMask(RelationDTO relation, string postalCodeFormat, string postalCode)
+        public void ApplyPostalCodeMask(RelationDTO relation, string postalCodeFormat)
         {
-            if (CheckPostalMask(postalCodeFormat, postalCode))
+            if (CheckPostalMask(postalCodeFormat, relation.PostalCode))
             {
-                relation.PostalCode = FormatPostalCode(postalCodeFormat, postalCode);
+                relation.PostalCode = FormatPostalCode(postalCodeFormat, relation.PostalCode);
             }
-            return relation;
         }
 
         /// <inheritdoc />
         public bool CheckPostalMask(string postalCodeFormat, string postalCode)
         {
+            if (string.IsNullOrEmpty(postalCodeFormat))
+            {
+                return false;
+            }
+
             var regularExpression = CreateRegularExpression(postalCodeFormat);
             var regEx = new Regex(regularExpression, RegexOptions.IgnoreCase);
+
             return regEx.IsMatch(postalCode);
         }
 

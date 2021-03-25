@@ -1,7 +1,7 @@
 ﻿namespace AndersenCoreApp.Infrastructure
 {
     /// <summary>
-    /// Enun for choosing order of sorting in Relation Filter
+    /// Enum for choosing order of sorting in Relation Filter
     /// </summary>
     public enum OrderBy
     {

@@ -1,7 +1,10 @@
-﻿namespace AndersenCoreApp.Models.DTO
+﻿using System;
+
+namespace AndersenCoreApp.Models.DTO
 {
     public class RelationDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string FullName { get; set; }
         public string TelephoneNumber { get; set; }

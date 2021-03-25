@@ -114,7 +114,7 @@ namespace AndersenCoreApp.Models.Domain
         public string SupplyNumber { get; set; }
         public Guid? ThirdPartyToUseForInvoicing { get; set; }
         public int? Flags { get; set; }
-        public Guid? RelationAddressId { get; set; }
+        public Guid RelationAddressId { get; set; }
         public virtual RelationAddress RelationAddress { get; set; }
         public virtual List<RelationCategory> RelationCategories { get; set; } = new List<RelationCategory>();
     }

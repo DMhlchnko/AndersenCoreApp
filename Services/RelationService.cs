@@ -1,4 +1,5 @@
-﻿using AndersenCoreApp.Infrastructure;
+﻿using AndersenCoreApp.Exceptions;
+using AndersenCoreApp.Infrastructure;
 using AndersenCoreApp.Interfaces.Formatters;
 using AndersenCoreApp.Interfaces.Repositories;
 using AndersenCoreApp.Interfaces.Services;
@@ -14,18 +15,24 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class RelationService : IRelationService
     {
-        private readonly IRelationRepository _relationRepo;
-        private readonly ICountryRepository _countryRepo;
-        private readonly IRelationAddressRepository _relationAddressRepo;
+        private readonly IRelationRepository _relationRepository;
+        private readonly ICountryRepository _countryRepository;
+        private readonly IRelationAddressRepository _relationAddressRepository;
         private readonly IMapper _mapper;
         private readonly IPostalCodeFormatter _formatter;
 
-        public RelationService(IRelationRepository relations, ICountryRepository countries,
-            IMapper mapper, IPostalCodeFormatter formatter, IRelationAddressRepository relationAddresses)
+        /// <summary>
+        /// Constructor of the RelationService.
+        /// </summary>
+        public RelationService(IRelationRepository relations,
+            ICountryRepository countries,
+            IMapper mapper,
+            IPostalCodeFormatter formatter,
+            IRelationAddressRepository relationAddresses)
         {
-            _relationRepo = relations;
-            _countryRepo = countries;
-            _relationAddressRepo = relationAddresses;
+            _relationRepository = relations;
+            _countryRepository = countries;
+            _relationAddressRepository = relationAddresses;
             _mapper = mapper;
             _formatter = formatter;
         }
@@ -33,14 +40,14 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<bool> CheckRelationExistenceAsync(Guid relationId)
         {
-            var result = await _relationRepo.HasAnyAsync(relationId);
+            var result = await _relationRepository.HasAnyAsync(relationId);
             return result;
         }
 
         /// <inheritdoc />
         public async Task<RelationDTO> GetOneAsync(Guid id)
         {
-            var relation = await _relationRepo.GetOneAsync(id);
+            var relation = await _relationRepository.GetOneAsync(id);
             var relationsViewModel = _mapper.Map<RelationDTO>(relation);
 
             return relationsViewModel;
@@ -49,7 +56,7 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> GetRelationsAsync(RelationFilter filter)
         {
-            var relations = await _relationRepo.GetAllAsync(filter);
+            var relations = await _relationRepository.GetAllAsync(filter);
             var relationViewModels = _mapper.Map<IEnumerable<RelationDTO>>(relations);
 
             return relationViewModels;
@@ -58,26 +65,48 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> CreateAsync(RelationDTO relation)
         {
-            if(relation == null)
+            if (relation == null)
             {
-                throw new AgrumentNullException($"{nameof(relation)} is null.");
+                throw new ArgumentNullException($"{nameof(relation)} is null.");
             }
-            var country = await _countryRepo.GetOneAsync(relation.Country);
+            
+            //1. Getting country for inputed relation.
+            var country = await _countryRepository.GetOneAsync(relation.Country);
+            if (country == null)
+            {
+                throw new NullException($"{nameof(country)} is null.");
+            }
+
+            //2. Applying postal code mask for relation.
             var postalCodeFormat = country.PostalCodeFormat;
-            var postalCode = relation.PostalCode;
-            relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-            var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
-                    relation.StreetNumber, relation.PostalCode, country.Id);
-            relationToCreate = new Relation
-                {
-                    Name = relation.Name,
-                    FullName = relation.FullName,
-                    TelephoneNumber = relation.TelephoneNumber,
-                    EmailAddress = relation.EMail,
-                    RelationAddressId = relationAddress.Id
-                };
-                relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
-                relation = _mapper.Map<RelationDTO>(relationToCreate);
+            _formatter.ApplyPostalCodeMask(relation, postalCodeFormat);
+
+            //3.Creating relation address for inputed relation.
+            var relationAddress = await _relationAddressRepository.CreateAsync(relation, country.Id);
+
+            //4. Creating new Relation.
+            var relationToCreate = new Relation
+            {
+                Id = relation.Id,
+                Name = relation.Name,
+                FullName = relation.FullName,
+                TelephoneNumber = relation.TelephoneNumber,
+                EmailAddress = relation.EMail,
+                RelationAddressId = relationAddress.Id,
+                RelationAddress = relationAddress,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "admin",
+                IsDisabled = false,
+                IsMe = false,
+                IsTemporary = false,
+                PaymentViaAutomaticDebit = false,
+                InvoiceDateGenerationOptions = 1,
+                InvoiceGroupByOptions = 1
+            };
+
+            //5. Adding new Relation to the database.
+            relationToCreate = await _relationRepository.CreateAsync(relationToCreate);
+            relation = _mapper.Map<RelationDTO>(relationToCreate);
 
             return relation;
         }
@@ -85,20 +114,38 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> UpdateAsync(RelationDTO relation)
         {
-            Country country;
-            string postalCodeFormat;
-            string postalCode;
-            Relation updatedRelation = new Relation();
-            if (relation != null)
+            if (relation == null)
             {
-                country = await _countryRepo.GetOneAsync(relation.Country);
-                postalCodeFormat = country.PostalCodeFormat;
-                postalCode = relation.PostalCode;
-                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-                updatedRelation = _mapper.Map<Relation>(relation);
-                updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
-                relation = _mapper.Map<RelationDTO>(updatedRelation);
+                throw new ArgumentNullException($"{nameof(relation)} is null.");
             }
+
+            //1. Getting country for inputed relation.
+            var country = await _countryRepository.GetOneAsync(relation.Country);
+            if (country == null)
+            {
+                throw new NullException($"{nameof(country)} is null.");
+            }
+
+            //2. Getting relation for updating.
+            var relationToUpdate = await _relationRepository.GetOneAsync(relation.Id);
+
+            //3. Applying postal code mask for relation.
+            var postalCodeFormat = country.PostalCodeFormat;
+            _formatter.ApplyPostalCodeMask(relation, postalCodeFormat);
+
+            //3.Updating relation address for inputed relation.
+            var relationAddressToUpdate = await _relationAddressRepository.UpdateAsync(relation, country.Id);
+
+            //4. Updating relation properties.
+            relationToUpdate.Name = relation.Name;
+            relationToUpdate.FullName = relation.FullName;
+            relationToUpdate.TelephoneNumber = relation.TelephoneNumber;
+            relationToUpdate.EmailAddress = relation.EMail;
+            relationToUpdate.RelationAddress = relationAddressToUpdate;
+
+            //5. Updating relation in database.
+            relationToUpdate = await _relationRepository.UpdateAsync(relationToUpdate);
+            relation = _mapper.Map<RelationDTO>(relationToUpdate);
 
             return relation;
         }
@@ -106,10 +153,16 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators)
         {
-            var relations = await _relationRepo.DeleteAsync(identificators);
-            var deletedRelations = _mapper.Map<IEnumerable<RelationDTO>>(relations);
+
+            List<RelationDTO> deletedRelations = new List<RelationDTO>();
+            var relations = await _relationRepository.DeleteAsync(identificators);
+            foreach(var relation in relations)
+            {
+                var relationDTO = _mapper.Map<RelationDTO>(relation);
+                deletedRelations.Add(relationDTO);
+            }
             return deletedRelations;
         }
-
+      
     }
 }
