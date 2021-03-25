@@ -87,7 +87,6 @@ namespace AndersenCoreApp.Services
             //4. Creating new Relation.
             var relationToCreate = new Relation
             {
-                Id = relation.Id,
                 Name = relation.Name,
                 FullName = relation.FullName,
                 TelephoneNumber = relation.TelephoneNumber,
@@ -134,7 +133,7 @@ namespace AndersenCoreApp.Services
             _formatter.ApplyPostalCodeMask(relation, postalCodeFormat);
 
             //3.Updating relation address for inputed relation.
-            var relationAddressToUpdate = await _relationAddressRepository.UpdateAsync(relation, country.Id);
+            var relationAddressToUpdate = await _relationAddressRepository.UpdateAsync(relation,relationToUpdate.RelationAddressId);
 
             //4. Updating relation properties.
             relationToUpdate.Name = relation.Name;

@@ -21,7 +21,7 @@ namespace AndersenCoreApp.Infrastructure
                .ForMember("PostalCode", opt => opt.MapFrom(c => c.RelationAddress.PostalCode))
                .ForMember("EMail", opt => opt.MapFrom(c => c.EmailAddress))
                .ForMember("StreetNumber", opt => opt.MapFrom(c => c.RelationAddress.Number))
-               .ForMember("Id",opt => opt.Ignore()).ReverseMap();
+               .ForMember("Id",opt => opt.MapFrom(c => c.Id)).ReverseMap();
         }
     }
 }
