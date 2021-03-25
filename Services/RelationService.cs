@@ -58,19 +58,17 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<RelationDTO> CreateAsync(RelationDTO relation)
         {
-            Country country;
-            string postalCodeFormat;
-            string postalCode;
-            Relation relationToCreate;
-            if (relation != null)
+            if(relation == null)
             {
-                country = await _countryRepo.GetOneAsync(relation.Country);
-                postalCodeFormat = country.PostalCodeFormat;
-                postalCode = relation.PostalCode;
-                relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-                var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
+                throw new AgrumentNullException($"{nameof(relation)} is null.");
+            }
+            var country = await _countryRepo.GetOneAsync(relation.Country);
+            var postalCodeFormat = country.PostalCodeFormat;
+            var postalCode = relation.PostalCode;
+            relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+            var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
                     relation.StreetNumber, relation.PostalCode, country.Id);
-                relationToCreate = new Relation
+            relationToCreate = new Relation
                 {
                     Name = relation.Name,
                     FullName = relation.FullName,
@@ -80,7 +78,6 @@ namespace AndersenCoreApp.Services
                 };
                 relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
                 relation = _mapper.Map<RelationDTO>(relationToCreate);
-            }
 
             return relation;
         }
@@ -102,7 +99,7 @@ namespace AndersenCoreApp.Services
                 updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
                 relation = _mapper.Map<RelationDTO>(updatedRelation);
             }
-            
+
             return relation;
         }
 
