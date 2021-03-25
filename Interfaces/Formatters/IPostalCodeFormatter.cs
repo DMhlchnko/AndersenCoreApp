@@ -20,6 +20,6 @@ namespace AndersenCoreApp.Interfaces.Formatters
         /// <summary>
         /// Applies postal code format
         /// </summary>
-        RelationDTO ApplyPostalCodeMask(RelationDTO relation, string postalCodeFormat, string postalCode);
+        void ApplyPostalCodeMask(RelationDTO relation, string postalCodeFormat);
     }
 }

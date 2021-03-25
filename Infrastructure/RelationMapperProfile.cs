@@ -4,8 +4,14 @@ using AutoMapper;
 
 namespace AndersenCoreApp.Infrastructure
 {
+    /// <summary>
+    /// Profile class for automapper
+    /// </summary>
     public class RelationMapperProfile : Profile
     {
+        /// <summary>
+        /// Default constructor that configures automapper
+        /// </summary>
         public RelationMapperProfile()
         {
             CreateMap<Relation, RelationDTO>()

@@ -14,6 +14,9 @@ namespace AndersenCoreApp.Services
     {
         private readonly RelationContext _db;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public RelationRepository(RelationContext db)
         {
             _db = db;
@@ -36,13 +39,14 @@ namespace AndersenCoreApp.Services
             }
             foreach (var relation in relationsToDelete)
             {
-                if(relation.IsDisabled != true)
+                if(!relation.IsDisabled)
                 {
                     relation.IsDisabled = true;
                     _db.Entry(relation).State = EntityState.Modified;
-                    await _db.SaveChangesAsync();
                 }
             }
+            await _db.SaveChangesAsync();
+
             return relationsToDelete;
         }
 
@@ -67,7 +71,9 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<Relation> GetOneAsync(Guid id)
         {
-            return await _db.Relations.FirstOrDefaultAsync(r => r.Id == id && r.IsDisabled == false);
+            var relation = await _db.Relations.FirstOrDefaultAsync(r => r.Id == id && r.IsDisabled == false);
+
+            return relation; 
         }
 
         /// <inheritdoc />
@@ -75,9 +81,14 @@ namespace AndersenCoreApp.Services
         {
             _db.Entry(entity).State = EntityState.Modified;
             await _db.SaveChangesAsync();
-            return await _db.Relations.FirstOrDefaultAsync(r => r.Id == entity.Id);
+            var relationAfterUpdate = await _db.Relations.FirstOrDefaultAsync(r => r.Id == entity.Id);
+
+            return relationAfterUpdate;
         }
 
+        /// <summary>
+        /// Method for filtering and sorting Relations
+        /// </summary>
         private async Task<IQueryable<Relation>> GetSortedAndFilteredRelations(RelationFilter filter)
         {
             var orderBy = filter.Order;
@@ -86,25 +97,27 @@ namespace AndersenCoreApp.Services
             IQueryable<Relation> query = _db.Relations.AsQueryable();
             if (!string.IsNullOrEmpty(filterCategory))
             {
-                var category = await _db.Categories.FirstOrDefaultAsync(c => c.Name.ToUpper() == filterCategory.ToUpper());
+                var category = await _db.Categories.FirstOrDefaultAsync(c => string.Equals
+                (c.Name,filterCategory,StringComparison.InvariantCultureIgnoreCase) == true);
                 query = _db.Relations.Where(r => r.RelationCategories.Any(rc => rc.CategoryId == category.Id));
             }
-            if (!string.IsNullOrEmpty(sortByProperty))
+            if (string.IsNullOrEmpty(sortByProperty))
             {
-                return (sortByProperty.ToUpper()) switch
-                {
-                    "NAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name),
-                    "FULLNAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.FullName) : query.OrderByDescending(r => r.FullName),
-                    "TELEPHONENUMBER" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.TelephoneNumber) : query.OrderByDescending(r => r.TelephoneNumber),
-                    "EMAIL" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.EmailAddress) : query.OrderByDescending(r => r.EmailAddress),
-                    "COUNTRY" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Country.Name) : query.OrderByDescending(r => r.RelationAddress.Country.Name),
-                    "CITY" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.City) : query.OrderByDescending(r => r.RelationAddress.City),
-                    "STREET" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Street) : query.OrderByDescending(r => r.RelationAddress.Street),
-                    "POSTALCODE" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.PostalCode) : query.OrderByDescending(r => r.RelationAddress.PostalCode),
-                    "STREETNUMBER" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Number) : query.OrderByDescending(r => r.RelationAddress.Number),
-                };
+                return query;
             }
-            return query;
+
+            return (sortByProperty.ToUpper()) switch
+            {
+                "NAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.Name) : query.OrderByDescending(r => r.Name),
+                "FULLNAME" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.FullName) : query.OrderByDescending(r => r.FullName),
+                "TELEPHONENUMBER" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.TelephoneNumber) : query.OrderByDescending(r => r.TelephoneNumber),
+                "EMAIL" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.EmailAddress) : query.OrderByDescending(r => r.EmailAddress),
+                "COUNTRY" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Country.Name) : query.OrderByDescending(r => r.RelationAddress.Country.Name),
+                "CITY" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.City) : query.OrderByDescending(r => r.RelationAddress.City),
+                "STREET" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Street) : query.OrderByDescending(r => r.RelationAddress.Street),
+                "POSTALCODE" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.PostalCode) : query.OrderByDescending(r => r.RelationAddress.PostalCode),
+                "STREETNUMBER" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Number) : query.OrderByDescending(r => r.RelationAddress.Number),
+            };
         }
     }
 }

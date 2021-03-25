@@ -5,6 +5,9 @@
     /// </summary>
     public class RelationFilter
     {
+        /// <summary>
+        /// Constructor that initialize filter properties
+        /// </summary>
         public RelationFilter(string filterByCategoryName, string sortByProperty, OrderBy order)
         {
             FilterByCategoryName = filterByCategoryName;
