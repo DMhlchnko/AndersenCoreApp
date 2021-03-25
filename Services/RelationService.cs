@@ -16,13 +16,16 @@ namespace AndersenCoreApp.Services
     {
         private readonly IRelationRepository _relationRepo;
         private readonly ICountryRepository _countryRepo;
+        private readonly IRelationAddressRepository _relationAddressRepo;
         private readonly IMapper _mapper;
         private readonly IPostalCodeFormatter _formatter;
 
-        public RelationService(IRelationRepository relations, ICountryRepository countries, IMapper mapper, IPostalCodeFormatter formatter)
+        public RelationService(IRelationRepository relations, ICountryRepository countries,
+            IMapper mapper, IPostalCodeFormatter formatter, IRelationAddressRepository relationAddresses)
         {
             _relationRepo = relations;
             _countryRepo = countries;
+            _relationAddressRepo = relationAddresses;
             _mapper = mapper;
             _formatter = formatter;
         }
@@ -63,8 +66,19 @@ namespace AndersenCoreApp.Services
             var postalCodeFormat = country.PostalCodeFormat;
             var postalCode = relation.PostalCode;
             relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
-            var relationToCreate = await _relationRepo.CreateAsync(_mapper.Map<Relation>(relation));
-            relation = _mapper.Map<RelationDTO>(relationToCreate);
+            var relationAddress = await _relationAddressRepo.CreateAsync(relation.City, relation.Street,
+                    relation.StreetNumber, relation.PostalCode, country.Id);
+            relationToCreate = new Relation
+                {
+                    Name = relation.Name,
+                    FullName = relation.FullName,
+                    TelephoneNumber = relation.TelephoneNumber,
+                    EmailAddress = relation.EMail,
+                    RelationAddressId = relationAddress.Id
+                };
+                relationToCreate = await _relationRepo.CreateAsync(relationToCreate);
+                relation = _mapper.Map<RelationDTO>(relationToCreate);
+
             return relation;
         }
 
@@ -74,17 +88,18 @@ namespace AndersenCoreApp.Services
             Country country;
             string postalCodeFormat;
             string postalCode;
-            Relation updatedRelation;
+            Relation updatedRelation = new Relation();
             if (relation != null)
             {
                 country = await _countryRepo.GetOneAsync(relation.Country);
                 postalCodeFormat = country.PostalCodeFormat;
                 postalCode = relation.PostalCode;
                 relation = _formatter.ApplyPostalCodeMask(relation, postalCodeFormat, postalCode);
+                updatedRelation = _mapper.Map<Relation>(relation);
+                updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
+                relation = _mapper.Map<RelationDTO>(updatedRelation);
             }
-            updatedRelation = _mapper.Map<Relation>(relation);
-            updatedRelation = await _relationRepo.UpdateAsync(updatedRelation);
-            relation = _mapper.Map<RelationDTO>(updatedRelation);
+
             return relation;
         }
 

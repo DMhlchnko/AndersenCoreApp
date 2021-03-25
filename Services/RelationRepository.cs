@@ -12,7 +12,8 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class RelationRepository : IRelationRepository
     {
-        private readonly RelationContext _db;
+    
+    private readonly RelationContext _db;
 
         public RelationRepository(RelationContext db)
         {
@@ -60,6 +61,7 @@ namespace AndersenCoreApp.Services
         {
             var relations = await GetSortedAndFilteredRelations(filter);
             relations = relations.Where(r => r.IsDisabled == false);
+            
             return await relations.ToListAsync();
         }
 
