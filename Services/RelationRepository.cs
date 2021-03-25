@@ -98,8 +98,8 @@ namespace AndersenCoreApp.Services
             IQueryable<Relation> query = _db.Relations.AsQueryable();
             if (!string.IsNullOrEmpty(filterCategory))
             {
-                var category = await _db.Categories.FirstOrDefaultAsync(c => string.Equals
-                (c.Name,filterCategory,StringComparison.InvariantCultureIgnoreCase) == true);
+                var category = await _db.Categories.FirstOrDefaultAsync(c => c.Name.ToUpper().Equals
+                (filterCategory.ToUpper()));
                 query = _db.Relations.Where(r => r.RelationCategories.Any(rc => rc.CategoryId == category.Id));
             }
             if (string.IsNullOrEmpty(sortByProperty))

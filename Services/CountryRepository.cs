@@ -32,7 +32,7 @@ namespace AndersenCoreApp.Services
         public async Task<Country> GetOneAsync(string name)
         {
             var country = await _db.Countries.FirstOrDefaultAsync(
-                c => string.Equals(c.Name,name,StringComparison.InvariantCultureIgnoreCase) == true);
+                c => c.Name.ToUpper().Equals(name.ToUpper()) == true);
 
             return country;
         }
