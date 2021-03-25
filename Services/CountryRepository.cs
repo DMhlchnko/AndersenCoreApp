@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace AndersenCoreApp.Services
 {
     /// <inheritdoc />
-    public class CountryRepository : ICountryRepository
+    public class CountryRepository : ICountryRepository 
+    { 
 
         private readonly RelationContext _db;
 
