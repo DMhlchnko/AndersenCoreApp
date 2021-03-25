@@ -21,8 +21,10 @@ namespace AndersenCoreApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _connString = Configuration.GetConnectionString("RelationConnection");
         }
 
+        private readonly string _connString;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.

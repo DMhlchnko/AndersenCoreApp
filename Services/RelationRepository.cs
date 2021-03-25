@@ -12,7 +12,8 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class RelationRepository : IRelationRepository
     {
-        private readonly RelationContext _db;
+    
+    private readonly RelationContext _db;
 
         /// <summary>
         /// Default constructor.

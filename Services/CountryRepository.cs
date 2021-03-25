@@ -9,7 +9,7 @@ namespace AndersenCoreApp.Services
 {
     /// <inheritdoc />
     public class CountryRepository : ICountryRepository
-    {
+
         private readonly RelationContext _db;
 
         /// <summary>
