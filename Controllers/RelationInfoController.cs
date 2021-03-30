@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 namespace AndersenCoreApp.Controllers
 {
     [EnableCors("CorsPolicy")]
-    [Route("api/[controller]")]
     [ApiController]
     public class RelationInfoController : ControllerBase
     {
