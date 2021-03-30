@@ -18,14 +18,14 @@ namespace AndersenCoreApp.Controllers
         {
             _relationInfoService = service;
         }
-        [HttpGet]
+        [HttpGet,Route("/Countries")]
         public async Task<IEnumerable<CountryDTO>> GetCountriesAsync()
         {
             var countries = await _relationInfoService.GetCoutriesAsync();
             return countries;
         }
 
-        [HttpGet]
+        [HttpGet,Route("/Categories")]
         public async Task<IEnumerable<CategoryDTO>> GetCategoriesAsync()
         {
             var categories = await _relationInfoService.GetCategoriesAsync();
