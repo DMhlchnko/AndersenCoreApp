@@ -111,7 +111,7 @@ namespace AndersenCoreApp.Migrations
                     b.ToTable("tblAddressType");
                 });
 
-            modelBuilder.Entity("AndersenCoreApp.Models.Category", b =>
+            modelBuilder.Entity("AndersenCoreApp.Models.CategoryDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -677,7 +677,7 @@ namespace AndersenCoreApp.Migrations
 
             modelBuilder.Entity("CategoryRelation", b =>
                 {
-                    b.HasOne("AndersenCoreApp.Models.Category", null)
+                    b.HasOne("AndersenCoreApp.Models.CategoryDTO", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)

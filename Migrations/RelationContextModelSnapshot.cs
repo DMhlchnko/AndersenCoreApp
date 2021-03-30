@@ -108,7 +108,7 @@ namespace AndersenCoreApp.Migrations
                     b.ToTable("tblAddressType");
                 });
 
-            modelBuilder.Entity("AndersenCoreApp.Models.Domain.Category", b =>
+            modelBuilder.Entity("AndersenCoreApp.Models.Domain.CategoryDTO", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -683,7 +683,7 @@ namespace AndersenCoreApp.Migrations
 
             modelBuilder.Entity("AndersenCoreApp.Models.Domain.RelationCategory", b =>
                 {
-                    b.HasOne("AndersenCoreApp.Models.Domain.Category", "Category")
+                    b.HasOne("AndersenCoreApp.Models.Domain.CategoryDTO", "CategoryDTO")
                         .WithMany("Relations")
                         .HasForeignKey("RelationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -695,12 +695,12 @@ namespace AndersenCoreApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("CategoryDTO");
 
                     b.Navigation("Relation");
                 });
 
-            modelBuilder.Entity("AndersenCoreApp.Models.Domain.Category", b =>
+            modelBuilder.Entity("AndersenCoreApp.Models.Domain.CategoryDTO", b =>
                 {
                     b.Navigation("Relations");
                 });

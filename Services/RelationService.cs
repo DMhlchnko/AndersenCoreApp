@@ -162,13 +162,5 @@ namespace AndersenCoreApp.Services
             }
             return deletedRelations;
         }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<CountryDTO>> GetCoutryList()
-        {
-            var countries = await _countryRepository.GetAllAsync();
-            var countriesDTO = _mapper.Map<IEnumerable<CountryDTO>>(countries);
-            return countriesDTO;
-        }
     }
 }

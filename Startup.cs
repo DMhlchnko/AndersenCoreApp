@@ -37,7 +37,9 @@ namespace AndersenCoreApp
             services.AddTransient<IRelationRepository, RelationRepository>();
             services.AddTransient<ICountryRepository, CountryRepository>();
             services.AddTransient<IRelationAddressRepository, RelationAddressRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IRelationService, RelationService>();
+            services.AddScoped<IRelationInfoService, RelationInfoService>();
             services.AddTransient<IRelationHelpers, RelationHelpers>();
             services.AddTransient<IPostalCodeFormatter, PostalCodeFormatter>();
             services.AddAutoMapper(typeof(Startup));

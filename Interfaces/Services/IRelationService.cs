@@ -43,10 +43,5 @@ namespace AndersenCoreApp.Interfaces.Services
         /// </summary>
         /// <returns>A list of deleted Relations</returns>
         Task<IEnumerable<RelationDTO>> DeleteAsync(params Guid[] identificators);
-
-        /// <summary>
-        /// Returns a list of all Countries
-        /// </summary>
-        Task<IEnumerable<CountryDTO>> GetCoutryList();
     }
 }
