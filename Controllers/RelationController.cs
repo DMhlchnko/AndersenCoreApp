@@ -2,6 +2,7 @@
 using AndersenCoreApp.Interfaces.Helpers;
 using AndersenCoreApp.Interfaces.Services;
 using AndersenCoreApp.Models.DTO;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Controllers
 {
+    [EnableCors("CorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class RelationController : ControllerBase
@@ -68,7 +70,7 @@ namespace AndersenCoreApp.Controllers
             return BadRequest(relation);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{identificators}")]
         public async Task<ActionResult> DeleteAsync(params Guid[] identificators)
         {
             var deletedRelations = await _relationService.DeleteAsync(identificators);

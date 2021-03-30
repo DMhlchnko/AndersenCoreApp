@@ -90,7 +90,7 @@ namespace AndersenCoreApp.Services
                 Name = relation.Name,
                 FullName = relation.FullName,
                 TelephoneNumber = relation.TelephoneNumber,
-                EmailAddress = relation.EMail,
+                EmailAddress = relation.Email,
                 RelationAddressId = relationAddress.Id,
                 RelationAddress = relationAddress,
                 CreatedAt = DateTime.Now,
@@ -139,7 +139,7 @@ namespace AndersenCoreApp.Services
             relationToUpdate.Name = relation.Name;
             relationToUpdate.FullName = relation.FullName;
             relationToUpdate.TelephoneNumber = relation.TelephoneNumber;
-            relationToUpdate.EmailAddress = relation.EMail;
+            relationToUpdate.EmailAddress = relation.Email;
             relationToUpdate.RelationAddress = relationAddressToUpdate;
 
             //5. Updating relation in database.
@@ -162,6 +162,13 @@ namespace AndersenCoreApp.Services
             }
             return deletedRelations;
         }
-      
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<CountryDTO>> GetCoutryList()
+        {
+            var countries = await _countryRepository.GetAllAsync();
+            var countriesDTO = _mapper.Map<IEnumerable<CountryDTO>>(countries);
+            return countriesDTO;
+        }
     }
 }

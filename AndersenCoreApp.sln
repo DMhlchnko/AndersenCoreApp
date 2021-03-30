@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AndersenCoreApp", "Andersen
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{38C31EB2-C944-401C-BE55-3379C5A91D5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AndersenCoreApp.Tests", "..\AndersenCoreApp.Tests\AndersenCoreApp.Tests.csproj", "{FAF747A2-7583-4AA2-8FB2-8B89A4774853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AndersenCoreApp.Tests", "..\AndersenCoreApp.Tests\AndersenCoreApp.Tests.csproj", "{FAF747A2-7583-4AA2-8FB2-8B89A4774853}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -118,6 +118,7 @@ namespace AndersenCoreApp.Services
                 "STREET" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Street) : query.OrderByDescending(r => r.RelationAddress.Street),
                 "POSTALCODE" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.PostalCode) : query.OrderByDescending(r => r.RelationAddress.PostalCode),
                 "STREETNUMBER" => orderBy == OrderBy.Ascending ? query.OrderBy(r => r.RelationAddress.Number) : query.OrderByDescending(r => r.RelationAddress.Number),
+                _ => query
             };
         }
     }

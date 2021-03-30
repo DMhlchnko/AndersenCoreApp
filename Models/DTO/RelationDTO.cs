@@ -17,7 +17,7 @@ namespace AndersenCoreApp.Models.DTO
         public string TelephoneNumber { get; set; }
 
         [Required, DataType(DataType.EmailAddress)]
-        public string EMail { get; set; }
+        public string Email { get; set; }
 
         [Required, DataType(DataType.Text)]
         public string Street { get; set; }

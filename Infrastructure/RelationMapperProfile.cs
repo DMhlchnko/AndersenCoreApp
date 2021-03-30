@@ -5,7 +5,7 @@ using AutoMapper;
 namespace AndersenCoreApp.Infrastructure
 {
     /// <summary>
-    /// Profile class for automapper
+    /// Relation profile class for automapper
     /// </summary>
     public class RelationMapperProfile : Profile
     {
@@ -19,7 +19,7 @@ namespace AndersenCoreApp.Infrastructure
                .ForMember("City", opt => opt.MapFrom(c => c.RelationAddress.City))
                .ForMember("Country", opt => opt.MapFrom(c => c.RelationAddress.Country.Name))
                .ForMember("PostalCode", opt => opt.MapFrom(c => c.RelationAddress.PostalCode))
-               .ForMember("EMail", opt => opt.MapFrom(c => c.EmailAddress))
+               .ForMember("Email", opt => opt.MapFrom(c => c.EmailAddress))
                .ForMember("StreetNumber", opt => opt.MapFrom(c => c.RelationAddress.Number))
                .ForMember("Id",opt => opt.MapFrom(c => c.Id)).ReverseMap();
         }
