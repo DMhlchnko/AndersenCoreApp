@@ -18,6 +18,7 @@ namespace AndersenCoreApp.Services
         private readonly IRelationRepository _relationRepository;
         private readonly ICountryRepository _countryRepository;
         private readonly IRelationAddressRepository _relationAddressRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
         private readonly IPostalCodeFormatter _formatter;
 
@@ -28,11 +29,13 @@ namespace AndersenCoreApp.Services
             ICountryRepository countries,
             IMapper mapper,
             IPostalCodeFormatter formatter,
-            IRelationAddressRepository relationAddresses)
+            IRelationAddressRepository relationAddresses,
+            ICategoryRepository categoryRepository)
         {
             _relationRepository = relations;
             _countryRepository = countries;
             _relationAddressRepository = relationAddresses;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _formatter = formatter;
         }
@@ -84,9 +87,13 @@ namespace AndersenCoreApp.Services
             //3.Creating relation address for inputed relation.
             var relationAddress = await _relationAddressRepository.CreateAsync(relation, country.Id);
 
-            //4. Creating new Relation.
+            //4.Getting Category for relation to create.
+            var categories = await _categoryRepository.GetCategoriesByNamesAsync(relation.Categories);
+
+            //5. Creating new Relation.
             var relationToCreate = new Relation
             {
+                Id = Guid.NewGuid(),
                 Name = relation.Name,
                 FullName = relation.FullName,
                 TelephoneNumber = relation.TelephoneNumber,
@@ -100,10 +107,13 @@ namespace AndersenCoreApp.Services
                 IsTemporary = false,
                 PaymentViaAutomaticDebit = false,
                 InvoiceDateGenerationOptions = 1,
-                InvoiceGroupByOptions = 1
+                InvoiceGroupByOptions = 1,
             };
 
-            //5. Adding new Relation to the database.
+            //6.Binding categories.
+            await BindCategoriesToRelation(relationToCreate, categories);
+
+            //7. Adding new Relation to the database.
             relationToCreate = await _relationRepository.CreateAsync(relationToCreate);
             relation = _mapper.Map<RelationDTO>(relationToCreate);
 
@@ -132,17 +142,23 @@ namespace AndersenCoreApp.Services
             var postalCodeFormat = country.PostalCodeFormat;
             _formatter.ApplyPostalCodeMask(relation, postalCodeFormat);
 
-            //3.Updating relation address for inputed relation.
+            //4. Updating relation address for inputed relation.
             var relationAddressToUpdate = await _relationAddressRepository.UpdateAsync(relation,relationToUpdate.RelationAddressId);
 
-            //4. Updating relation properties.
+            //5. Updating relation properties.
             relationToUpdate.Name = relation.Name;
             relationToUpdate.FullName = relation.FullName;
             relationToUpdate.TelephoneNumber = relation.TelephoneNumber;
             relationToUpdate.EmailAddress = relation.Email;
             relationToUpdate.RelationAddress = relationAddressToUpdate;
 
-            //5. Updating relation in database.
+            //6. Getting Category for relation to create.
+            var categories = await _categoryRepository.GetCategoriesByNamesAsync(relation.Categories);
+
+            //7. Updating categories for relation.
+            await BindCategoriesToRelation(relationToUpdate, categories);
+
+            //8. Updating relation in database.
             relationToUpdate = await _relationRepository.UpdateAsync(relationToUpdate);
             relation = _mapper.Map<RelationDTO>(relationToUpdate);
 
@@ -161,6 +177,20 @@ namespace AndersenCoreApp.Services
                 deletedRelations.Add(relationDTO);
             }
             return deletedRelations;
+        }
+
+        public async Task BindCategoriesToRelation(Relation relation, IEnumerable<Category> categories)
+        {
+            foreach(var c in categories)
+            {
+                relation.RelationCategories.Add(new RelationCategory
+                {
+                    RelationId = relation.Id,
+                    CategoryId = c.Id,
+                    //Relation = relation,
+                    //Category = c
+                });
+            }
         }
     }
 }

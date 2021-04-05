@@ -13,5 +13,10 @@ namespace AndersenCoreApp.Interfaces.Repositories
         /// Returns all categories from data base
         /// </summary>
         Task<IEnumerable<Category>> GetCategoriesAsync();
+
+        /// <summary>
+        /// Returns category by it's name
+        /// </summary>
+        Task<IEnumerable<Category>> GetCategoriesByNamesAsync(List<string> Names);
     }
 }

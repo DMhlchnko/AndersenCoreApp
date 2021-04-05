@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace AndersenCoreApp.Controllers
@@ -46,9 +47,9 @@ namespace AndersenCoreApp.Controllers
 
             return Ok(relation);
         }
-
+        
         [HttpPost]
-        public async Task<ActionResult> CreateRelation(RelationDTO relation)
+        public async Task<ActionResult> CreateRelation([FromBody]RelationDTO relation)
         {
             if (ModelState.IsValid)
             {
@@ -70,8 +71,8 @@ namespace AndersenCoreApp.Controllers
             return BadRequest(relation);
         }
 
-        [HttpPut("{identificators}")]
-        public async Task<ActionResult> DeleteAsync(params Guid[] identificators)
+        [HttpPut("Delete")]
+        public async Task<ActionResult> DeleteAsync([FromBody]params Guid[] identificators)
         {
             var deletedRelations = await _relationService.DeleteAsync(identificators);
             return Ok(deletedRelations);

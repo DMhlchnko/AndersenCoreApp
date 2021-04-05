@@ -34,10 +34,10 @@ namespace AndersenCoreApp
             services.AddDbContext<RelationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("RelationConnection")).UseLazyLoadingProxies());
 
-            services.AddTransient<IRelationRepository, RelationRepository>();
-            services.AddTransient<ICountryRepository, CountryRepository>();
-            services.AddTransient<IRelationAddressRepository, RelationAddressRepository>();
-            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IRelationRepository, RelationRepository>();
+            services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IRelationAddressRepository, RelationAddressRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IRelationService, RelationService>();
             services.AddScoped<IRelationInfoService, RelationInfoService>();
             services.AddTransient<IRelationHelpers, RelationHelpers>();

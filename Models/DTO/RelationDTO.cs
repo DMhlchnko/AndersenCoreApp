@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace AndersenCoreApp.Models.DTO
@@ -7,31 +8,34 @@ namespace AndersenCoreApp.Models.DTO
     {
         public Guid Id { get; set; }
 
-        [Required,DataType(DataType.Text)]
+        [Required]
         public string Name { get; set; }
 
-        [Required, DataType(DataType.Text)]
+        [Required]
         public string FullName { get; set; }
 
-        [Required, DataType(DataType.PhoneNumber)]
+        [Required]
         public string TelephoneNumber { get; set; }
 
-        [Required, DataType(DataType.EmailAddress)]
+        [Required]
         public string Email { get; set; }
 
-        [Required, DataType(DataType.Text)]
+        [Required]
         public string Street { get; set; }
 
-        [Required, DataType(DataType.Text)]
+        [Required]
         public string City { get; set; }
 
-        [Required, DataType(DataType.Text)]
+        [Required]
         public string Country { get; set; }
 
-        [Required, DataType(DataType.Text)]
+        [Required]
         public string PostalCode { get; set; }
 
         [Required]
         public int StreetNumber { get; set; }
+        
+        [Required]
+        public List<string> Categories { get; set; }
     }
 }
