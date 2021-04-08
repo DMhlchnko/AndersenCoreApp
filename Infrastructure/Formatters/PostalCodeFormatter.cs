@@ -53,6 +53,12 @@ namespace AndersenCoreApp.Infrastructure.Formatters
                     case '-':
                         sb.Append(@"\-?");
                         break;
+                    case '_':
+                        sb.Append(@"\W?");
+                        break;
+                    case ' ':
+                        sb.Append(@"\s?");
+                        break;
                 }
 
             }
@@ -89,7 +95,20 @@ namespace AndersenCoreApp.Infrastructure.Formatters
                     if (!char.Equals(currentPostalCodeChar, '-'))
                     {
                         sb.Append(currentFormatChar);
-
+                    }
+                }
+                if (currentFormatChar == '_')
+                {
+                    if (!char.Equals(currentPostalCodeChar, '_'))
+                    {
+                        sb.Append(currentFormatChar);
+                    }
+                }
+                if (currentFormatChar == ' ')
+                {
+                    if (!char.Equals(currentPostalCodeChar, ' '))
+                    {
+                        sb.Append(currentFormatChar);
                     }
                 }
                 if (currentFormatChar == 'L')
