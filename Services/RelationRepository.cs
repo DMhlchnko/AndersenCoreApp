@@ -81,10 +81,7 @@ namespace AndersenCoreApp.Services
         public async Task<Relation> UpdateAsync(Relation entity)
         {
             var categories = _db.RelationCategories.Where(rc => rc.RelationId == entity.Id);
-            foreach(var cat in categories)
-            {
-                _db.Entry(cat).State = EntityState.Deleted;
-            }
+            _db.RelationCategories.RemoveRange(categories);
             _db.Entry(entity).State = EntityState.Modified;
             await _db.SaveChangesAsync();
             var relationAfterUpdate = await _db.Relations.FirstOrDefaultAsync(r => r.Id == entity.Id);
