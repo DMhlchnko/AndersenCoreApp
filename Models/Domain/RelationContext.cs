@@ -14,6 +14,7 @@ namespace AndersenCoreApp.Models.Domain
         public virtual DbSet<Country> Countries { get; set; }
         public virtual DbSet<Relation> Relations { get; set; }
         public virtual DbSet<RelationAddress> RelationAddresses { get; set; }
+        public virtual DbSet<RelationCategory> RelationCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -111,7 +111,7 @@ namespace AndersenCoreApp.Services
             };
 
             //6.Binding categories.
-            await BindCategoriesToRelation(relationToCreate, categories);
+            BindCategoriesToRelation(relationToCreate, categories);
 
             //7. Adding new Relation to the database.
             relationToCreate = await _relationRepository.CreateAsync(relationToCreate);
@@ -156,7 +156,7 @@ namespace AndersenCoreApp.Services
             var categories = await _categoryRepository.GetCategoriesByNamesAsync(relation.Categories);
 
             //7. Updating categories for relation.
-            await BindCategoriesToRelation(relationToUpdate, categories);
+            BindCategoriesToRelation(relationToUpdate, categories);
 
             //8. Updating relation in database.
             relationToUpdate = await _relationRepository.UpdateAsync(relationToUpdate);
@@ -179,16 +179,15 @@ namespace AndersenCoreApp.Services
             return deletedRelations;
         }
 
-        public async Task BindCategoriesToRelation(Relation relation, IEnumerable<Category> categories)
+        public void BindCategoriesToRelation(Relation relation, IEnumerable<Category> categories)
         {
+            relation.RelationCategories = new List<RelationCategory>();
             foreach(var c in categories)
             {
                 relation.RelationCategories.Add(new RelationCategory
                 {
                     RelationId = relation.Id,
                     CategoryId = c.Id,
-                    //Relation = relation,
-                    //Category = c
                 });
             }
         }

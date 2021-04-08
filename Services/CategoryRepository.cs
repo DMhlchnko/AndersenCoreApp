@@ -31,16 +31,16 @@ namespace AndersenCoreApp.Services
         public async Task<IEnumerable<Category>> GetCategoriesByNamesAsync(List<string> Names)
         {
             var categories = new List<Category>();
-            foreach(var name in Names)
+            foreach (var name in Names)
             {
                 var category = await _db.Categories.FirstOrDefaultAsync(c => c.Name == name);
-                if(category != null)
+                if (category != null)
                 {
                     categories.Add(category);
                 }
             }
 
-            return categories; 
+            return categories;
         }
     }
 }
