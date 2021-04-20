@@ -12,7 +12,6 @@ namespace AndersenCoreApp.Services
     /// <inheritdoc />
     public class RelationRepository : IRelationRepository
     {
-    
     private readonly RelationContext _db;
 
         /// <summary>
@@ -63,10 +62,26 @@ namespace AndersenCoreApp.Services
         /// <inheritdoc />
         public async Task<IReadOnlyCollection<Relation>> GetAllAsync(RelationFilter filter)
         {
-            var relations = await GetSortedAndFilteredRelations(filter);
-            relations = relations.Where(r => r.IsDisabled == false);
+            var queryRelations = await GetSortedAndFilteredRelations(filter);
+            var relations = await queryRelations.Where(r => r.IsDisabled == false).ToListAsync();
+            if(relations != null)
+            {
+                foreach (var relation in relations)
+                {
+                    var relationCategories = await _db.RelationCategories.Where(c => c.RelationId == relation.Id).ToListAsync();
+                    foreach (var relationCategory in relationCategories)
+                    {
+                        var category = await _db.Categories.FirstOrDefaultAsync(c => c.Id == relationCategory.CategoryId);
+                        if(category != null)
+                        {
+                            relation.Categories.Add(category?.Name);
+                        }
+                    }
+                }
+            }
+            
 
-            return await relations.ToListAsync();
+            return relations;
         }
 
         /// <inheritdoc />

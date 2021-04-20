@@ -117,5 +117,7 @@ namespace AndersenCoreApp.Models.Domain
         public Guid RelationAddressId { get; set; }
         public virtual RelationAddress RelationAddress { get; set; }
         public virtual List<RelationCategory> RelationCategories { get; set; } = new List<RelationCategory>();
+        [NotMapped]
+        public List<string> Categories { get; set; } = new List<string>();
     }
 }
