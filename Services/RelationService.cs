@@ -151,6 +151,8 @@ namespace AndersenCoreApp.Services
             relationToUpdate.TelephoneNumber = relation.TelephoneNumber;
             relationToUpdate.EmailAddress = relation.Email;
             relationToUpdate.RelationAddress = relationAddressToUpdate;
+            relationToUpdate.RelationAddress.Country = country;
+            relationToUpdate.RelationAddress.CountryId = country.Id;
 
             //6. Getting Category for relation to create.
             var categories = await _categoryRepository.GetCategoriesByNamesAsync(relation.Categories);
